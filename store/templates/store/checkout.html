@@ -2,5 +2,63 @@
 {% load static %}
 
 {% block content %}
-    <h3>Заказ</h3>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="box-element" id="form-wrapper">
+                <form id="form">
+                    <div id="user-info">
+                        <div class="form-field">
+                            <input required class="form-control" type="text" name="name" placeholder="ФИО...">
+                        </div>
+                        <div class="form-field">
+                            <input required class="form-control" type="email" name="email" placeholder="Email...">
+                        </div>
+                    </div>
+                    <div id="shipping-info">
+                        <hr>
+                        <p>Информация для доставки:</p>
+                        <hr>
+                        <div class="form-field">
+                            <input required class="form-control" type="text" name="address" placeholder="Адрес...">
+                        </div>
+                        <div class="form-field">
+                            <input required class="form-control" type="text" name="city" placeholder="Город...">
+                        </div>
+                        <div class="form-field">
+                            <input required class="form-control" type="text" name="state" placeholder="Область\край...">
+                        </div>
+                        <div class="form-field">
+                            <input required class="form-control" type="text" name="zipcode" placeholder="Индекс...">
+                        </div>
+                        <div class="form-field">
+                            <input required class="form-control" type="text" name="country" placeholder="Страна...">
+                        </div>
+                    </div>
+                    <hr>
+                    <input id="form-button" class="btn btn-success btn-block" type="submit" value="Продолжить">
+                </form>
+            </div>
+
+            <br>
+            <div class="box-element hidden" id="payment-info">
+                <small>Paypal options</small>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="box-element">
+                <a class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Назад в корзину</a>
+                <hr>
+                <h3>В заказе:</h3>
+                <hr>
+                <div class="cart-row">
+                    <div style="flex: 2"><img class="row-image" src="{% static 'images/placeholder.png' %}"></div>
+                    <div style="flex: 2">Product 1</div>
+                    <div style="flex: 1">20 руб.</div>
+                    <div style="flex: 1">x2</div>
+                </div>
+                <h5>Кол-во: 2</h5>
+                <h5>Сумма: 40 руб.</h5>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
