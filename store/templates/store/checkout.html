@@ -42,6 +42,7 @@
             <br>
             <div class="box-element hidden" id="payment-info">
                 <small>Paypal options</small>
+                <button id="make-payment">Совершить платёж</button>
             </div>
         </div>
         <div class="col-lg-6">
@@ -64,9 +65,20 @@
         </div>
     </div>
     <script type="text/javascript">
-        var shipping = '{{ order.shipping }}'
+        let shipping = '{{ order.shipping }}'
+        let total = '{{ order.get_cart_total }}'
+
         if (shipping === 'False'){
             document.getElementById('shipping-info').innerHTML = ''
+        }
+        if (user !== 'AnonymousUser'){
+            document.getElementById('user-info').innerHTML = ''
+        }
+        if(shipping === 'False' && user !== 'AnonymousUser'){
+            // Скрыть форму ввода Имени и почты покупателя
+            document.getElementById('form-wrapper').classList.add('hidden');
+            // Показать оплату если покупатель хочет купить без доставки
+            document.getElementById('payment-info').classList.remove('hidden');
         }
         var form = document.getElementById('form')
         form.addEventListener('submit', function (e) {
@@ -74,6 +86,39 @@
             console.log('Форма отправлена...')
             document.getElementById('form-button').classList.add('hidden');
             document.getElementById('payment-info').classList.remove('hidden');
+            document.getElementById('make-payment').addEventListener('click', function (e) {
+                submitFormData()
+            })
         })
+        function submitFormData() {
+            console.log('Кнопка оплаты нажата')
+            let userFormData = {
+                'name':null,
+                'email':null,
+                'total':total,
+            }
+
+            let shippingInfo = {
+                'address':null,
+                'city':null,
+                'state':null,
+                'zipcode':null,
+                'total':total,
+            }
+
+            if (shipping !== 'False'){
+                shippingInfo.address = form.address.value
+                shippingInfo.city = form.city.value
+                shippingInfo.state = form.state.value
+                shippingInfo.zipcode = form.zipcode.value
+            }
+
+            if (user === 'AnonymousUser'){
+                userFormData.name = form.name.value
+                userFormData.email = form.email.value
+            }
+            console.log('Информация о доставке:', shippingInfo)
+            console.log('Информация о покупателе:', userFormData)
+        }
     </script>
 {% endblock content %}
