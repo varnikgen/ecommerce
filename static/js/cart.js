@@ -28,9 +28,9 @@ function addCookieItem(productId, action) {
 
     if (action === 'remove'){
         cart[productId]['quantity'] -= 1
-        if (cart[productId] <= 0){
+        if (cart[productId]['quantity'] <= 0){
             console.log('Товар удалён из корзины')
-            delete cart[productId];
+            delete cart[productId]
         }
     }
 

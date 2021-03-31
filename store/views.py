@@ -23,7 +23,7 @@ def store(request):
         cartItems = order['get_cart_items']
 
         for i in cart:
-            cartItems +=cart[i]['quantity']
+            cartItems += cart[i]['quantity']
 
     products = Product.objects.all()
     context = {'products': products, 'cartItems': cartItems}
@@ -47,7 +47,33 @@ def cart(request):
         cartItems = order['get_cart_items']
 
         for i in cart:
-            cartItems +=cart[i]['quantity']
+            # Блок "try" используется, чтобы предотвратить нахождение в корзине товаров,
+            # которые были удалены из базы товаров и их больше нет
+            try:
+                cartItems += cart[i]['quantity']
+
+                product = Product.objects.get(id=i)
+                total = (product.price * cart[i]['quantity'])
+
+                order['get_cart_total'] += total
+                order['get_cart_items'] += cart[i]['quantity']
+
+                item = {
+                    'product': {
+                        'id': product.id,
+                        'name': product.name,
+                        'price': product.price,
+                        'image': product.image,
+                    },
+                    'quantity': cart[i]['quantity'],
+                    'get_total': total,
+                }
+                items.append(item)
+
+                if product.digital == False:
+                    order['shipping'] = True
+            except:
+                pass
 
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/cart.html', context)
@@ -70,10 +96,17 @@ def checkout(request):
         cartItems = order['get_cart_items']
 
         for i in cart:
-            cartItems +=cart[i]['quantity']
+            cartItems += cart[i]['quantity']
+
+            product = Product.objects.get(id=i)
+            total = (product.price * cart[i]['quantity'])
+
+            order['get_cart_total'] += total
+            order['get_cart_items'] += cart[i]['quantity']
 
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/checkout.html', context)
+
 
 def updateItem(request):
     data = json.loads(request.body)
