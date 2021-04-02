@@ -1,6 +1,6 @@
 import json
 
-from .models import Product, Order, OrderItem, ShippingAddress
+from .models import Product, Order, OrderItem, ShippingAddress, Customer
 
 
 def cookieCart(request):
@@ -14,7 +14,6 @@ def cookieCart(request):
             cart = json.loads(request.COOKIES['cart'])
         except:
             cart = {}
-        print('Cart:', cart)
         items = []
         order = {'get_cart_total': 0, 'get_cart_items': 0}
         cartItems = order['get_cart_items']
@@ -50,3 +49,30 @@ def cookieCart(request):
 
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return context
+
+
+def guestOrder(request, data):
+    print('Пользователь не авторизован')
+    print('COOKIES:', request.COOKIES)
+    name = data['form']['name']
+    email = data['form']['email']
+    items = cookieCart(request)['items']
+    customer, created = Customer.objects.get_or_create(
+        email=email,
+    )
+    customer.name = name
+    customer.save()
+
+    order = Order.objects.create(
+        customer=customer,
+        completed=False,
+    )
+    for item in items:
+        product = Product.objects.get(id=item['product']['id'])
+
+        orderItem = OrderItem.objects.create(
+            product=product,
+            order=order,
+            quantity=item['quantity']
+        )
+    return customer, order
